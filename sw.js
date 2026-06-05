@@ -1,10 +1,13 @@
 /* Service worker — caches the app shell for offline use.
    The only thing that needs the network is the OpenAI transcription call. */
-const CACHE = "stt-shell-v1";
+const CACHE = "stt-shell-v2";
 const SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./icon-512-maskable.png",
 ];
 
 self.addEventListener("install", (event) => {
