@@ -23,7 +23,12 @@ A single-page **speech-to-text PWA**. Vanilla HTML/CSS/JS, **no frameworks, no b
 
 ## UI intent
 
-A small **floating frosted-glass widget**, ~260px, pinned bottom-right, on a near-transparent body (`background: rgba(0,0,0,0.05)`) so it reads as an overlay tool, not a full-screen app. Keep animations smooth/snappy. Mic has a pulsing glow while recording; a subtle animated waveform shows during capture.
+A **centered frosted-glass card** (~440px max, full-width on phones) on a dark app background (radial purple glows over `#08080c`). It reads as a focused little app, not a tiny corner widget (an earlier version was a ~260px bottom-right floating widget — that's been superseded). Keep animations smooth/snappy. Mic is large with a pulsing glow while recording; a subtle animated waveform shows during capture.
+
+## Install support
+
+- **Android/Chrome**: installs as a WebAPK (needs the PNG icons + manifest). The `shortcuts` array gives a long-press **Record** shortcut.
+- **iOS/Safari**: install via Share → Add to Home Screen. iOS ignores the manifest `shortcuts` (no Record shortcut) and uses the `apple-touch-icon` + `apple-mobile-web-app-*` meta tags. Recording works via MediaRecorder producing `audio/mp4` (iOS doesn't support webm/opus) — `pickMime()` already falls back to mp4, and `ext()` maps it for the API upload. Don't remove the mp4 fallback.
 
 ## Regenerating icons
 

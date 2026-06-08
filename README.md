@@ -29,12 +29,23 @@ Drag this folder to [vercel.com/new](https://vercel.com/new) (or any static host
 ### 2. Add your API key
 On first launch the settings panel opens. Paste your OpenAI API key (`sk-...`). It's stored **only** in your device's `localStorage` and sent **only** to `api.openai.com` — never anywhere else.
 
-### 3. Install on your phone (Android / Chrome)
+### 3a. Install on Android (Chrome)
 1. Open the deployed URL in **Chrome** on your Galaxy.
 2. Tap the **⋮ menu → "Install app"** (some Chrome versions label it **"Add to Home screen"**, then show an **Install** dialog).
    - ✅ A correct install shows an icon with **no Chrome badge** in the corner — that's a real WebAPK.
    - ❌ A Chrome-badged icon means it was only bookmarked (no app shortcuts). This happens if the manifest lacks valid **PNG** icons.
 3. **Long-press the installed icon → "Record"** → drag it onto your home screen for a one-tap "open and start recording" launcher.
+
+### 3b. Install on iPhone (Safari)
+> Must be **Safari** — iOS only allows home-screen install from Safari, not Chrome.
+1. Open the deployed URL in **Safari**.
+2. Tap the **Share** button (the square with an up-arrow).
+3. Scroll down → **"Add to Home Screen"** → **Add**.
+4. Launch it from the home-screen icon — it opens full-screen like a real app.
+
+iOS differences to expect:
+- **No "Record" shortcut** — Apple doesn't support the manifest `shortcuts`, so the long-press shortcut is Android-only. The app icon opens the app normally.
+- Recording still works (iOS records as `audio/mp4`, which the app handles automatically).
 
 ---
 

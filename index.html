@@ -3,12 +3,20 @@
   ════════════════════════════════════════════════════════════════════════
   SPEECH-TO-TEXT PWA  —  Install instructions
   ════════════════════════════════════════════════════════════════════════
+  ANDROID (Chrome):
   1. Deploy to Vercel (drag this folder to vercel.com/new)
   2. Open the deployed URL in Chrome on your Galaxy
-  3. Tap the three-dot menu → "Add to Home screen"
-  4. The app installs as a WebAPK — it will appear in your app drawer like a
-     real app
-  5. Long-press the home screen icon to access the "Record" shortcut directly
+  3. Tap the three-dot menu → "Install app" (or "Add to Home screen")
+  4. It installs as a WebAPK — appears in your app drawer like a real app
+  5. Long-press the home screen icon → "Record" shortcut to record instantly
+
+  iPHONE (Safari — must be Safari, not Chrome):
+  1. Open the deployed URL in Safari
+  2. Tap the Share button (square with an up-arrow)
+  3. Scroll down → "Add to Home Screen" → Add
+  4. It launches full-screen from the home screen like a real app
+     (Note: iOS doesn't support the long-press "Record" shortcut — that's
+      an Android-only feature.)
   ════════════════════════════════════════════════════════════════════════
 -->
 <html lang="en">
@@ -19,6 +27,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Voice → Text" />
+  <meta name="application-name" content="Voice → Text" />
   <title>Voice → Text</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -28,46 +38,57 @@
       --accent: #7c5cff;
       --accent-2: #b18cff;
       --rec: #ff4d6d;
-      --card-w: 260px;
-      --radius: 22px;
+      --card-w: 440px;
+      --radius: 30px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     html, body {
       margin: 0;
-      height: 100%;
+      min-height: 100%;
       font-family: -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
-      /* Near-transparent body so the widget feels like it floats over whatever
-         is behind it — the "tiny tool in the corner" illusion. */
-      background: rgba(0, 0, 0, 0.05);
+      /* A real dark app background now that this isn't a tiny floating widget. */
+      background:
+        radial-gradient(900px 600px at 50% -10%, rgba(124, 92, 255, 0.16), transparent 60%),
+        radial-gradient(700px 500px at 100% 110%, rgba(177, 140, 255, 0.10), transparent 55%),
+        #08080c;
+      background-attachment: fixed;
       color: #f4f4f6;
-      overflow: hidden;
       -webkit-user-select: none;
       user-select: none;
     }
 
-    /* ─────────────────────────  Floating card  ───────────────────────── */
+    /* Center the card on screen, with safe-area-aware padding. */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: max(18px, env(safe-area-inset-top))
+               max(18px, env(safe-area-inset-right))
+               max(18px, env(safe-area-inset-bottom))
+               max(18px, env(safe-area-inset-left));
+    }
+
+    /* ─────────────────────────  Card  ───────────────────────── */
     .widget {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      bottom: calc(14px + env(safe-area-inset-bottom));
       width: var(--card-w);
-      max-width: calc(100vw - 28px);
-      padding: 18px 18px 20px;
+      max-width: 100%;
+      padding: 26px 26px 30px;
       border-radius: var(--radius);
       background: rgba(18, 18, 24, 0.72);
       backdrop-filter: blur(22px) saturate(160%);
       -webkit-backdrop-filter: blur(22px) saturate(160%);
       border: 1px solid rgba(255, 255, 255, 0.09);
-      box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.65),
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7),
                   inset 0 1px 0 rgba(255, 255, 255, 0.06);
       animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.2);
     }
 
     @keyframes pop {
-      from { transform: translateY(14px) scale(0.94); opacity: 0; }
+      from { transform: translateY(14px) scale(0.96); opacity: 0; }
       to   { transform: translateY(0) scale(1); opacity: 1; }
     }
 
@@ -76,28 +97,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 22px;
     }
     .title {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.3px;
       color: #d8d8e6;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 9px;
     }
     .title .dot {
-      width: 7px; height: 7px; border-radius: 50%;
+      width: 9px; height: 9px; border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
+      box-shadow: 0 0 10px var(--accent);
     }
-    .actions { display: flex; gap: 4px; }
+    .actions { display: flex; gap: 6px; }
     .icon-btn {
-      width: 32px; height: 32px;
+      width: 42px; height: 42px;
       display: grid; place-items: center;
       border: none;
-      border-radius: 10px;
+      border-radius: 13px;
       background: rgba(255, 255, 255, 0.05);
       color: #c9c9d6;
       cursor: pointer;
@@ -106,56 +127,56 @@
     .icon-btn:hover { background: rgba(255, 255, 255, 0.1); }
     .icon-btn:active { transform: scale(0.88); }
     .icon-btn.on { color: var(--accent-2); background: rgba(124, 92, 255, 0.18); }
-    .icon-btn svg { width: 17px; height: 17px; }
+    .icon-btn svg { width: 22px; height: 22px; }
 
     /* ─────────────────────────  Mic button  ─────────────────────────── */
     .mic-wrap {
       display: grid;
       place-items: center;
-      padding: 6px 0 4px;
+      padding: 16px 0 6px;
     }
     .mic {
       position: relative;
-      width: 92px; height: 92px;
+      width: 132px; height: 132px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
       background: radial-gradient(circle at 30% 25%, var(--accent-2), var(--accent) 70%);
       color: #fff;
       display: grid; place-items: center;
-      box-shadow: 0 10px 26px -6px rgba(124, 92, 255, 0.6);
+      box-shadow: 0 16px 40px -8px rgba(124, 92, 255, 0.6);
       transition: transform 0.14s ease;
     }
     .mic:active { transform: scale(0.93); }
-    .mic svg { width: 38px; height: 38px; z-index: 2; }
+    .mic svg { width: 54px; height: 54px; z-index: 2; }
 
     .mic.recording {
       background: radial-gradient(circle at 30% 25%, #ff7d96, var(--rec) 70%);
-      box-shadow: 0 10px 26px -6px rgba(255, 77, 109, 0.65);
+      box-shadow: 0 16px 40px -8px rgba(255, 77, 109, 0.65);
       animation: glow 1.4s ease-in-out infinite;
     }
     @keyframes glow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.55), 0 10px 26px -6px rgba(255, 77, 109, 0.65); }
-      50%      { box-shadow: 0 0 0 16px rgba(255, 77, 109, 0), 0 10px 26px -6px rgba(255, 77, 109, 0.65); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.55), 0 16px 40px -8px rgba(255, 77, 109, 0.65); }
+      50%      { box-shadow: 0 0 0 22px rgba(255, 77, 109, 0), 0 16px 40px -8px rgba(255, 77, 109, 0.65); }
     }
 
     /* spinner shown while transcribing */
     .mic.busy { pointer-events: none; opacity: 0.85; }
     .spinner {
-      position: absolute; inset: -5px;
+      position: absolute; inset: -6px;
       border-radius: 50%;
-      border: 3px solid rgba(255, 255, 255, 0.25);
+      border: 4px solid rgba(255, 255, 255, 0.25);
       border-top-color: #fff;
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .hint {
-      margin-top: 10px;
-      font-size: 11.5px;
+      margin-top: 16px;
+      font-size: 14px;
       color: #9a9aab;
       text-align: center;
-      min-height: 14px;
+      min-height: 18px;
     }
 
     /* ─────────────────────────  Waveform  ───────────────────────────── */
@@ -163,27 +184,27 @@
       display: none;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      height: 26px;
-      margin-top: 10px;
+      gap: 4px;
+      height: 38px;
+      margin-top: 14px;
     }
     .wave.active { display: flex; }
     .wave i {
-      width: 3px;
-      border-radius: 3px;
+      width: 4px;
+      border-radius: 4px;
       background: linear-gradient(var(--accent-2), var(--accent));
       animation: bounce 1s ease-in-out infinite;
     }
     @keyframes bounce {
-      0%, 100% { height: 6px; opacity: 0.5; }
-      50%      { height: 24px; opacity: 1; }
+      0%, 100% { height: 8px; opacity: 0.5; }
+      50%      { height: 36px; opacity: 1; }
     }
 
     /* ─────────────────────────  Result  ─────────────────────────────── */
     .result {
       display: none;
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: 20px;
+      padding-top: 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       animation: fade 0.3s ease;
     }
@@ -194,62 +215,62 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .badge {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
-      padding: 3px 9px;
+      padding: 5px 12px;
       border-radius: 999px;
       background: rgba(124, 92, 255, 0.18);
       color: var(--accent-2);
       border: 1px solid rgba(124, 92, 255, 0.3);
     }
     .text {
-      font-size: 14.5px;
-      line-height: 1.5;
+      font-size: 17px;
+      line-height: 1.55;
       color: #ececf2;
-      max-height: 160px;
+      max-height: 240px;
       overflow-y: auto;
       word-break: break-word;
       -webkit-user-select: text;
       user-select: text;
     }
     .copy-btn {
-      width: 30px; height: 30px;
+      width: 38px; height: 38px;
       flex: 0 0 auto;
       display: grid; place-items: center;
-      border: none; border-radius: 9px;
+      border: none; border-radius: 11px;
       background: rgba(255, 255, 255, 0.06);
       color: #c9c9d6; cursor: pointer;
       transition: transform 0.12s, background 0.18s, color 0.18s;
     }
     .copy-btn:active { transform: scale(0.85); }
     .copy-btn.done { color: #4ade80; background: rgba(74, 222, 128, 0.16); }
-    .copy-btn svg { width: 15px; height: 15px; }
+    .copy-btn svg { width: 18px; height: 18px; }
 
     /* ─────────────────────────  History panel  ─────────────────────── */
     .history {
       display: none;
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: 20px;
+      padding-top: 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      max-height: 240px;
+      max-height: 360px;
       overflow-y: auto;
       animation: fade 0.3s ease;
     }
     .history.show { display: block; }
     .history h4 {
-      margin: 0 0 8px;
-      font-size: 11px;
+      margin: 0 0 12px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.6px;
       color: #8a8a9a;
     }
     .h-item {
-      padding: 9px 10px;
-      margin-bottom: 7px;
-      border-radius: 12px;
+      padding: 12px 13px;
+      margin-bottom: 9px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
@@ -257,38 +278,38 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
-    .h-meta { font-size: 10px; color: #80808f; display: flex; gap: 6px; align-items: center; }
+    .h-meta { font-size: 11.5px; color: #80808f; display: flex; gap: 8px; align-items: center; }
     .h-text {
-      font-size: 12.5px;
-      line-height: 1.45;
+      font-size: 14.5px;
+      line-height: 1.5;
       color: #d6d6e0;
       -webkit-user-select: text; user-select: text;
       word-break: break-word;
     }
-    .h-empty { font-size: 12px; color: #75758a; text-align: center; padding: 10px 0; }
+    .h-empty { font-size: 13.5px; color: #75758a; text-align: center; padding: 14px 0; }
 
     /* ─────────────────────────  Settings  ───────────────────────────── */
     .settings {
       display: none;
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: 20px;
+      padding-top: 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       animation: fade 0.3s ease;
     }
     .settings.show { display: block; }
     .settings label {
       display: block;
-      font-size: 11px;
+      font-size: 13px;
       color: #9a9aab;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .settings input {
       width: 100%;
-      padding: 10px 11px;
-      font-size: 13px;
-      border-radius: 11px;
+      padding: 13px 14px;
+      font-size: 15px;
+      border-radius: 13px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(0, 0, 0, 0.35);
       color: #fff;
@@ -298,19 +319,19 @@
     .settings input:focus { border-color: var(--accent); }
     .save-btn {
       width: 100%;
-      margin-top: 10px;
-      padding: 11px;
-      font-size: 13px;
+      margin-top: 12px;
+      padding: 14px;
+      font-size: 15px;
       font-weight: 600;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--accent-2), var(--accent));
       color: #fff;
       cursor: pointer;
       transition: transform 0.12s, opacity 0.18s;
     }
     .save-btn:active { transform: scale(0.97); }
-    .settings .note { font-size: 10.5px; color: #75758a; margin-top: 8px; line-height: 1.4; }
+    .settings .note { font-size: 12px; color: #75758a; margin-top: 10px; line-height: 1.45; }
 
     /* first-run gate hides the mic until a key exists */
     body.no-key .mic-wrap, body.no-key .hint { display: none; }
