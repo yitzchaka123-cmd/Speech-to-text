@@ -364,6 +364,9 @@
     <div class="bar">
       <div class="title"><span class="dot"></span> Voice → Text</div>
       <div class="actions">
+        <button class="icon-btn" id="uploadBtn" title="Upload a voice recording" aria-label="Upload a voice recording">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        </button>
         <button class="icon-btn" id="histBtn" title="History" aria-label="History">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         </button>
@@ -381,6 +384,7 @@
     </div>
     <div class="wave" id="wave"></div>
     <div class="hint" id="hint">Tap to record</div>
+    <input id="fileInput" type="file" accept="audio/*" hidden />
 
     <!-- Result -->
     <div class="result" id="result">
@@ -455,6 +459,7 @@
       history: $("history"), histList: $("histList"), histBtn: $("histBtn"),
       settings: $("settings"), gearBtn: $("gearBtn"),
       keyInput: $("keyInput"), saveKey: $("saveKey"),
+      uploadBtn: $("uploadBtn"), fileInput: $("fileInput"),
       toast: $("toast"),
     };
 
@@ -619,8 +624,14 @@
       const type = (mediaRecorder && mediaRecorder.mimeType) || "audio/webm";
       const blob = new Blob(chunks, { type });
       stopStream();
-
       if (!blob.size) { els.hint.textContent = "Nothing recorded — tap to retry"; return; }
+      processAudio(blob, type, "audio." + ext(type));
+    }
+
+    // Shared by live recording and the upload button.
+    async function processAudio(blob, type, filename) {
+      if (!hasKey()) { openSettings(); toast("Enter your API key first"); return; }
+      if (!blob || !blob.size) { toast("That file looks empty"); return; }
 
       els.mic.classList.add("busy");
       const sp = document.createElement("div");
@@ -629,7 +640,7 @@
       els.hint.textContent = "Transcribing…";
 
       try {
-        const out = await transcribe(blob, type);
+        const out = await transcribe(blob, type, filename);
         showResult(out.text || "", out.language || "");
         if (out.text) {
           addHistory({ text: out.text, lang: out.language || "", ts: Date.now() });
@@ -646,14 +657,16 @@
     }
 
     function ext(type) {
-      if (type.includes("mp4")) return "mp4";
+      if (type.includes("mp4") || type.includes("m4a") || type.includes("aac")) return "mp4";
+      if (type.includes("mpeg") || type.includes("mp3")) return "mp3";
+      if (type.includes("wav")) return "wav";
       if (type.includes("ogg")) return "ogg";
       return "webm";
     }
 
-    async function transcribe(blob, type) {
+    async function transcribe(blob, type, filename) {
       const fd = new FormData();
-      fd.append("file", blob, "audio." + ext(type));
+      fd.append("file", blob, filename || ("audio." + ext(type)));
       fd.append("model", MODEL);
       fd.append("response_format", "json");
       // NOTE: intentionally no `language` param — let the model auto-detect.
@@ -701,6 +714,20 @@
     });
 
     els.copyBtn.addEventListener("click", () => copyText(els.text.textContent, els.copyBtn));
+
+    // Upload a voice recording instead of recording live.
+    els.uploadBtn.addEventListener("click", () => {
+      if (!hasKey()) { openSettings(); toast("Enter your API key first"); return; }
+      els.fileInput.click();
+    });
+    els.fileInput.addEventListener("change", () => {
+      const f = els.fileInput.files && els.fileInput.files[0];
+      if (!f) return;
+      closePanels();
+      els.result.classList.remove("show");
+      processAudio(f, f.type || "", f.name || ("audio." + ext(f.type || "")));
+      els.fileInput.value = "";   // allow re-picking the same file
+    });
 
     els.histBtn.addEventListener("click", () => {
       const show = !els.history.classList.contains("show");
